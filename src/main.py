@@ -6,6 +6,9 @@ import pygame
 import sys
 from game import Game
 
+CONFIG_FILE_PATH = "app_config.json"
+logger = None
+
 def configure_logging(config):
     '''
     configure_logging(config)
@@ -43,6 +46,27 @@ def load_app_config(filename):
     with open(filename, 'r', encoding='utf-8') as f:
         return json.load(f)
 
+def save_app_config(config, filename):
+    '''
+    save_app_config - Storing the application configuration back to the config file so that it will remember your preferences
+    
+    :param config: A dictionary representing the app config we're going to store
+    :param filename: The name of the json file it should be stored in
+    '''
+    logger.info(f"Saving Configuration File to {filename}")
+    try:
+        # 1. Open the file in 'w' (write) mode to overwrite the contents
+        with open(CONFIG_FILE_PATH, 'w') as f:
+            
+            # 2. Use json.dump() to write the Python dictionary to the file
+            json.dump(
+                config,  # The data to be written
+                filename,            # The file object
+                indent=4      # A crucial argument for human-readable output
+            )        
+    except IOError as e:
+        logger.error(f"Failed to save configuration file: {e}")
+
 def main_menu():
     return 'quit'
 
@@ -53,29 +77,33 @@ def main():
     '''
 
     game_playing = True  # This is the boolean that keeps us from termination until the user chooses "quit"
-    config = load_app_config("app_config.json") # Grab the app config
+    config = load_app_config(CONFIG_FILE_PATH) # Grab the app config
     configure_logging(config.get("logging")) # Use the logging section of the config to set up app logging
     logger = logging.getLogger("main") # Define a logger for main()
 
     logger.info("Config loaded and logging initialized.")
-
     logger.debug(config.get("logging")) 
     
-
     while game_playing:
+        logger.info("Calling Main Menu")
         menu_selection = main_menu()
+        logger.debug(f"Menu Selection: {menu_selection}")
 
         match menu_selection:
             case 'new':
+                logger.debug("Matched 'new'")
                 # Initialize the game with default settings
                 pass
             case 'load':
+                logger.debug("Matched 'load'")
                 # Initialize the game with settings from a file
                 pass
             case 'options':
+                logger.debug("Matched 'options'")
                 # Go to the options page
                 pass
             case 'quit':
+                logger.debug("Matched 'quit'")
                 game_playing = False
 
 
