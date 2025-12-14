@@ -1,0 +1,12 @@
+{
+    "app": {
+        "name": "Blink's Block Blitz",
+        "screen_width": 800,
+        "screen_height": 600,
+        "fps": 60
+    },
+    "logging":{
+        "level": "INFO",
+        "file": "blink-block-blitz.log"
+    }
+}
