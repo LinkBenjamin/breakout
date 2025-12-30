@@ -4,7 +4,8 @@ import logging
 import json
 import pygame
 import sys
-from game import Game
+from core.game import Game
+from screens.menu import MainMenu
 
 CONFIG_FILE_PATH = "app_config.json"
 logger = None
@@ -67,8 +68,13 @@ def save_app_config(config, filename):
     except IOError as e:
         logger.error(f"Failed to save configuration file: {e}")
 
-def main_menu():
-    return 'quit'
+def main_menu_screen(screen, config):
+    """
+    Creates the Menu instance and waits for a choice.
+    """
+    menu = MainMenu(screen, config)
+    response = menu.run() # This blocks until a choice is made
+    return response
 
 def main():
     '''
@@ -83,10 +89,14 @@ def main():
 
     logger.info("Config loaded and logging initialized.")
     logger.debug(config.get("logging")) 
+
+    pygame.init()
+    screen = pygame.display.set_mode((config['app']['screen_width'], config['app']['screen_height']))
+    pygame.display.set_caption(config['app']['name'])
     
     while game_playing:
         logger.info("Calling Main Menu")
-        menu_selection = main_menu()
+        menu_selection = main_menu_screen(screen, config)
         logger.debug(f"Menu Selection: {menu_selection}")
 
         match menu_selection:
@@ -106,6 +116,8 @@ def main():
                 logger.debug("Matched 'quit'")
                 game_playing = False
 
+    pygame.quit()
+    sys.exit()
 
 if __name__ == "__main__":
     main()
