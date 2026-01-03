@@ -14,5 +14,10 @@
         "text_color": [255,255,255],
         "font_size": 72,
         "font": "assets/fonts/Blox2/Blox2.ttf"
+    },
+    "game": {
+        "background_color": [0,0,0],
+        "paddle_color": [255,255,255],
+        "default_ball_radius": 10
     }
 }

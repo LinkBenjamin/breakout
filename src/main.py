@@ -4,7 +4,7 @@ import logging
 import json
 import pygame
 import sys
-from core.game import Game
+from screens.game_window import GameWindow
 from screens.menu import MainMenu
 
 CONFIG_FILE_PATH = "app_config.json"
@@ -76,6 +76,14 @@ def main_menu_screen(screen, config):
     response = menu.run() # This blocks until a choice is made
     return response
 
+def play_game_screen(screen, config, data=None):
+    """
+    Creates the game play screen and allows the player to play.
+    """
+    game = GameWindow(screen, config, data)
+    response = game.run() # This blocks until the game ends, either via save or game-over
+    return response
+
 def main():
     '''
     main() is the program entry point.  It's where all the basic initialization
@@ -102,8 +110,7 @@ def main():
         match menu_selection:
             case 'new':
                 logger.debug("Matched 'new'")
-                # Initialize the game with default settings
-                pass
+                play_game_screen(screen, config)
             case 'load':
                 logger.debug("Matched 'load'")
                 # Initialize the game with settings from a file
