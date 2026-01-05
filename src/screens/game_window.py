@@ -4,6 +4,7 @@ import math
 import random
 from core.ball import Ball
 from core.paddle import Paddle
+from core.level import Level
 
 class GameWindow:
     def __init__(self, screen, config, data=None):
@@ -27,10 +28,35 @@ class GameWindow:
 
         self.balls = []
 
-        ball_start = (self.s_width // 2, self.s_height - (6 * p_height))
+        ball_start = (self.s_width // 2, self.s_height - (3 * p_height))
         ball_radius = config.get('game',{}).get('default_ball_radius',10)
         ball = Ball((self.s_width,self.s_height),ball_start,ball_radius, (0,0))
         self.balls.append(ball)
+
+        self.bricks = []
+        self.brick_color = config.get('game',{}).get('brick_color',[100,100,100])
+        self.current_level = 1
+        level = Level(self.current_level, self.s_width, self.s_height)
+        self.bricks = level.load_level()
+
+    def check_collision_side(self, ball, brick):
+        # Calculate the overlap on all four sides
+        dr = abs(ball.right - brick.left)
+        dl = abs(ball.left - brick.right)
+        db = abs(ball.bottom - brick.top)
+        dt = abs(ball.top - brick.bottom)
+
+        # Find the smallest overlap
+        min_overlap = min(dr, dl, db, dt)
+
+        if min_overlap == dr:
+            return "right"  # Player hit the left side of the obstacle
+        elif min_overlap == dl:
+            return "left"   # Player hit the right side of the obstacle
+        elif min_overlap == db:
+            return "bottom" # Player hit the top of the obstacle
+        elif min_overlap == dt:
+            return "top"    # Player hit the bottom of the obstacle
 
     def start_play(self):
         self.logger.debug("Starting the first ball on the game board now...")
@@ -54,9 +80,7 @@ class GameWindow:
         # Convert max angle to radians and calculate actual bounce angle
         max_angle_rad = math.radians(max_angle_deg)
         bounce_angle = relative_hit * max_angle_rad
-
-        self.logger.debug(f"Angle: {bounce_angle}")
-        self.logger.debug(f"Hit: {relative_hit}")
+        
         # Calculate new velocity vectors
         # We use sin for X and cos for Y because 0 degrees is "Straight Up"
         new_vel_x = -speed * math.sin(bounce_angle)
@@ -102,12 +126,29 @@ class GameWindow:
                     ball.vel_x = v_new[0]
                     ball.vel_y = v_new[1]
                     ball.rect.bottom = self.paddle.rect.top
+                
+                new_bricks = []
+                for brick in self.bricks:
+                    if ball.rect.colliderect(brick):
+                        cside = self.check_collision_side(ball.rect, brick)
+                        self.logger.info(f"Brick hit on {cside}!")
+                        if cside in ['left', 'right']:
+                            ball.vel_x *= -1
+                        if cside in ['top', 'bottom']:
+                            ball.vel_y *= -1
+                    else:
+                        new_bricks.append(brick)
+                    pygame.draw.rect(self.screen, self.brick_color,brick)
+                self.bricks = new_bricks
 
             pygame.display.flip()  
 
             self.balls = [b for b in self.balls if not b.handle_wall_collisions()]
             if not self.balls:
                 running = False # Game over, you lost the last one
+            if not self.bricks:
+                # do something, you won!
+                pass
 
         pygame.mouse.set_visible(True)
         return "MENU"

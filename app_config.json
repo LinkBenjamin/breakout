@@ -18,6 +18,7 @@
     "game": {
         "background_color": [0,0,0],
         "paddle_color": [255,255,255],
+        "brick_color": [0,255,0],
         "default_ball_radius": 10
     }
 }
