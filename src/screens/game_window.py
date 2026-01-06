@@ -16,11 +16,11 @@ class GameWindow:
         p_width = self.s_width // 6
 
         self.s_height = config.get('app', {}).get("screen_height", 600)
-        p_height = self.s_height // 20
+        self.p_height = self.s_height // 20
 
-        p_y = self.s_height - (2 * p_height)
+        p_y = self.s_height - (2 * self.p_height)
 
-        self.paddle = Paddle(p_y, self.s_width // 2, p_width, p_height)
+        self.paddle = Paddle(p_y, self.s_width // 2, p_width, self.p_height)
         self.paddle_color = config.get('game', {}).get('paddle_color', [255,255,255])
         self.background_color = config.get('game', {}).get('background_color',[0,0,0])
 
@@ -28,14 +28,16 @@ class GameWindow:
 
         self.balls = []
 
-        ball_start = (self.s_width // 2, self.s_height - (3 * p_height))
-        ball_radius = config.get('game',{}).get('default_ball_radius',10)
-        ball = Ball((self.s_width,self.s_height),ball_start,ball_radius, (0,0))
-        self.balls.append(ball)
+        self.ball_radius = config.get('game',{}).get('default_ball_radius',10)
+        self.balls.append(self.init_ball(self.p_height, self.ball_radius))
 
         self.brick_color = config.get('game',{}).get('brick_color',[100,100,100])
         self.bricks = self.load_level(1)
 
+    def init_ball(self, p_height, ball_radius):
+        ball_start = (self.s_width // 2, self.s_height - (3 * p_height))
+        return Ball((self.s_width,self.s_height),ball_start,ball_radius, (0,0))
+    
     def load_level(self, lev):
         self.current_level = lev
         level = Level(lev, self.s_width, self.s_height)
@@ -149,8 +151,11 @@ class GameWindow:
             if not self.balls:
                 running = False # Game over, you lost the last one
             if not self.bricks:
-                # do something, you won!
-                pass
+                self.logger.info(f"Completed level {self.current_level}")
+                self.current_level += 1
+                self.logger.info(f"Loading level {self.current_level}")
+                self.bricks = self.load_level(self.current_level)
+                self.balls = [self.init_ball(self.p_height, self.ball_radius)]
 
         pygame.mouse.set_visible(True)
         return "MENU"

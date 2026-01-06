@@ -18,7 +18,7 @@ class Level:
                 row = line.strip().split(',')
                 data.append(row)
         
-        brick_width = self.width // 10
+        brick_width = self.width // len(data[0])
         brick_height = (self.height // 2) // 5
 
         for i,row in enumerate(data):

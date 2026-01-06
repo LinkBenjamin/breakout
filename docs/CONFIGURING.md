@@ -1,13 +1,11 @@
 # CONFIGURING.md: How to set up the app_config.json file
 
-Note that ALL TOP-LEVEL ITEMS (e.g. 'app', 'logging', etc) are REQUIRED.
-
 ```json
 {
     "app": {
         "name": "Blink Block Blitz",
-        "screen_width": 800,
-        "screen_height": 600,
+        "screen_width": 1200,
+        "screen_height": 700,
         "fps": 60
     },
     "logging":{
@@ -19,6 +17,12 @@ Note that ALL TOP-LEVEL ITEMS (e.g. 'app', 'logging', etc) are REQUIRED.
         "text_color": [255,255,255],
         "font_size": 72,
         "font": "assets/fonts/Blox2/Blox2.ttf"
+    },
+    "game": {
+        "background_color": [0,0,0],
+        "paddle_color": [255,255,255],
+        "brick_color": [0,255,0],
+        "default_ball_radius": 10
     }
 }
 ```

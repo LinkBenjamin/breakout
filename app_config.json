@@ -1,8 +1,8 @@
 {
     "app": {
         "name": "Blink Block Blitz",
-        "screen_width": 800,
-        "screen_height": 600,
+        "screen_width": 1200,
+        "screen_height": 700,
         "fps": 60
     },
     "logging":{
