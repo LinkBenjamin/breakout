@@ -33,11 +33,13 @@ class GameWindow:
         ball = Ball((self.s_width,self.s_height),ball_start,ball_radius, (0,0))
         self.balls.append(ball)
 
-        self.bricks = []
         self.brick_color = config.get('game',{}).get('brick_color',[100,100,100])
-        self.current_level = 1
-        level = Level(self.current_level, self.s_width, self.s_height)
-        self.bricks = level.load_level()
+        self.bricks = self.load_level(1)
+
+    def load_level(self, lev):
+        self.current_level = lev
+        level = Level(lev, self.s_width, self.s_height)
+        return level.load_level()
 
     def check_collision_side(self, ball, brick):
         # Calculate the overlap on all four sides

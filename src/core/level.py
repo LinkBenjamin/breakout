@@ -23,7 +23,8 @@ class Level:
 
         for i,row in enumerate(data):
             for j,col in enumerate(row):
-                new_rect = Rect(j * brick_width,i * brick_height,brick_width,brick_height)
-                rects.append(new_rect)
+                if col == '1':
+                    new_rect = Rect(j * brick_width,i * brick_height,brick_width - 2,brick_height -2)
+                    rects.append(new_rect)
 
         return rects
