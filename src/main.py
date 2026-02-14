@@ -6,6 +6,7 @@ import pygame
 import sys
 from screens.game_window import GameWindow
 from screens.menu import MainMenu
+from screens.win_screen import WinScreen
 
 CONFIG_FILE_PATH = "app_config.json"
 logger = None
@@ -84,6 +85,14 @@ def play_game_screen(screen, config, data=None):
     response = game.run() # This blocks until the game ends, either via save or game-over
     return response
 
+def show_win_screen(screen, config):
+    '''
+    Creates the win screen and displays it
+    '''
+    win = WinScreen(screen,config)
+    response = win.run()
+    return response
+
 def main():
     '''
     main() is the program entry point.  It's where all the basic initialization
@@ -110,7 +119,9 @@ def main():
         match menu_selection:
             case 'new':
                 logger.debug("Matched 'new'")
-                play_game_screen(screen, config)
+                response = play_game_screen(screen, config)
+                if 'WIN' in response:
+                    show_win_screen(screen,config)
             case 'load':
                 logger.debug("Matched 'load'")
                 # Initialize the game with settings from a file

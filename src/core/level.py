@@ -13,6 +13,11 @@ class Level:
     def load_level(self):
         rects = []
         data = []
+
+        if not self.level_file.exists():
+            print(f"Warning: {self.level_file} not found.")
+            return None
+    
         with open(self.level_file, 'r', encoding='utf-8') as f:
             for line in f:
                 row = line.strip().split(',')
